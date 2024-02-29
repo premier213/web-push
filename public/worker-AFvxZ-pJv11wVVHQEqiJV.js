@@ -1,0 +1,1 @@
+(()=>{"use strict";self.addEventListener("push",(function(t){const i=t.data.json();t.waitUntil(self.registration.showNotification(i.title,{body:i.body,icon:i.icon}))})),self.addEventListener("notificationclick",(function(){console.log("🎯 #43-worker/index.ts",22222222)}))})();
