@@ -46,6 +46,8 @@ const Index = () => {
   const [subscription, setSubscription] = useState(null);
   const [registration, setRegistration] = useState(null);
 
+  let sb;
+
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", function () {
@@ -56,26 +58,34 @@ const Index = () => {
               "Service Worker registered with scope:",
               registration.scope
             );
-            var channel = pusher.subscribe(`private-rates.1`);
-            channel.bind("rates.update.price", async function (data) {
-              if (Notification.permission === "granted") {
-                await fetch("/api/notification", {
-                  method: "POST",
-                  headers: {
-                    "Content-type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    subscription,
-                  }),
-                });
-              }
-            });
           })
           .catch(function (error) {
             console.error("Service Worker registration failed:", error);
           });
       });
     }
+  }, []);
+
+  const pushhh = async () => {
+    console.log("🎯 #68-pages/index.tsx", sb);
+    await fetch("/api/notification", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        subscription: sb,
+      }),
+    });
+  };
+
+  useEffect(() => {
+    var channel = pusher.subscribe(`private-rates.1`);
+    channel.bind("rates.update.price", async function (data) {
+      if (Notification.permission === "granted") {
+        await pushhh();
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -87,6 +97,7 @@ const Index = () => {
       // run only in browser
       navigator.serviceWorker.ready.then((reg) => {
         reg.pushManager.getSubscription().then((sub) => {
+          console.log("🎯 #1060000000000000000-pages/index.tsx", sub);
           if (
             sub &&
             !(
@@ -94,7 +105,8 @@ const Index = () => {
               Date.now() > sub.expirationTime - 5 * 60 * 1000
             )
           ) {
-            setSubscription(sub);
+            console.log("🎯 #index.tsx", sub);
+            sb = sub;
             setIsSubscribed(true);
           }
         });
