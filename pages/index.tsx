@@ -57,13 +57,16 @@ const Index = () => {
               registration.scope
             );
             var channel = pusher.subscribe(`private-rates.1`);
-            channel.bind("rates.update.price", function (data) {
-              console.log("🎯 #61-pages/index.tsx", data);
-              // Handle the event and display the notification in Chrome
+            channel.bind("rates.update.price", async function (data) {
               if (Notification.permission === "granted") {
-                new Notification("New Notification", {
-                  body: data.price_buy,
-                  icon: "/icon.png",
+                await fetch("/api/notification", {
+                  method: "POST",
+                  headers: {
+                    "Content-type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    subscription,
+                  }),
                 });
               }
             });
